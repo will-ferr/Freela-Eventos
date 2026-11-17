@@ -1,0 +1,55 @@
+groups:
+  - name: workevent-api
+    rules:
+      - alert: APIDown
+        expr: up{job="workevent-api"} == 0
+        for: 1m
+        labels: { severity: critical }
+        annotations:
+          summary: API indisponível
+          description: O Prometheus não consegue coletar métricas da API há mais de 1 minuto.
+
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(workevent_http_requests_total{status=~"5.."}[5m]))
+            / clamp_min(sum(rate(workevent_http_requests_total[5m])), 1e-9) > 0.05
+        for: 5m
+        labels: { severity: critical }
+        annotations:
+          summary: Taxa de erros 5xx acima de 5%
+          description: "{{ $value | humanizePercentage }} das requisições estão falhando."
+
+      - alert: HighLatencyP95
+        expr: |
+          histogram_quantile(0.95,
+            sum by (le) (rate(workevent_http_request_duration_seconds_bucket{route!="/metrics"}[5m]))
+          ) > 0.5
+        for: 10m
+        labels: { severity: warning }
+        annotations:
+          summary: Latência p95 acima de 500 ms
+          description: "p95 atual: {{ $value | humanizeDuration }}."
+
+      - alert: PanicRecovered
+        expr: increase(workevent_http_panics_recovered_total[5m]) > 0
+        labels: { severity: warning }
+        annotations:
+          summary: Panic recuperado na API
+          description: Verifique os logs (mensagem "panic recuperado") para a stack trace.
+
+      - alert: DBPoolSaturated
+        expr: |
+          max(go_sql_in_use_connections) / clamp_min(max(go_sql_max_open_connections), 1) > 0.9
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: Pool de conexões do banco acima de 90%
+          description: Considere aumentar DB_MAX_OPEN_CONNS ou investigar queries lentas.
+
+      - alert: RateLimitSpike
+        expr: rate(workevent_http_rate_limited_total[5m]) > 1
+        for: 5m
+        labels: { severity: info }
+        annotations:
+          summary: Muitas requisições sendo limitadas
+          description: Pode indicar abuso ou limite mal dimensionado.

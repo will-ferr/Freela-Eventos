@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS professional_categories;
+DROP FUNCTION IF EXISTS set_updated_at();
+DROP EXTENSION IF EXISTS btree_gist;
+DROP EXTENSION IF EXISTS citext;
+DROP EXTENSION IF EXISTS pgcrypto;

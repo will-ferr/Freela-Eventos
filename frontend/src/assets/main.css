@@ -1,0 +1,98 @@
+@import '@fontsource-variable/inter';
+@import 'tailwindcss';
+
+/* Dark mode controlado por classe (.dark no <html>), definida pelo theme store. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Tokens semânticos. Componentes usam bg-surface, text-muted, border-line...
+ * e nunca cores cruas, para que o tema escuro seja só uma troca de variáveis.
+ * Identidade: grafite/azul-noite + âmbar ("luz de palco").
+ */
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #f1f3f6;
+  --line: #e3e6eb;
+  --ink: #0f172a;
+  --muted: #5b6474;
+  --brand: #d97706;
+  --brand-ink: #ffffff;
+  --brand-soft: #fef3c7;
+  --success: #15803d;
+  --success-soft: #dcfce7;
+  --danger: #b91c1c;
+  --danger-soft: #fee2e2;
+  --info: #1d4ed8;
+  --info-soft: #dbeafe;
+  --sidebar: #0f172a;
+  --sidebar-ink: #cbd5e1;
+  --sidebar-active: #1e293b;
+}
+
+.dark {
+  --bg: #0b1120;
+  --surface: #111827;
+  --surface-2: #1a2232;
+  --line: #263041;
+  --ink: #e5e7eb;
+  --muted: #94a3b8;
+  --brand: #f59e0b;
+  --brand-ink: #111827;
+  --brand-soft: #3a2a0b;
+  --success: #4ade80;
+  --success-soft: #0f2e1c;
+  --danger: #f87171;
+  --danger-soft: #3b1414;
+  --info: #93c5fd;
+  --info-soft: #172554;
+  --sidebar: #070b14;
+  --sidebar-ink: #94a3b8;
+  --sidebar-active: #172033;
+}
+
+@theme inline {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-brand: var(--brand);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-soft: var(--brand-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-ink: var(--sidebar-ink);
+  --color-sidebar-active: var(--sidebar-active);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-bg text-ink font-sans antialiased;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

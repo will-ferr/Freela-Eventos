@@ -1,0 +1,44 @@
+# Override de desenvolvimento: hot reload no backend (air) e no frontend (Vite).
+#
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+#
+# Frontend em http://localhost:5173 (o Vite faz proxy de /api para o backend).
+
+services:
+  postgres:
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/scripts/postgres-init:/docker-entrypoint-initdb.d:ro
+
+  backend:
+    build:
+      context: ./backend
+      target: dev
+    image: workevent-backend-dev
+    environment:
+      LOG_FORMAT: text
+      LOG_LEVEL: debug
+    volumes:
+      - ./backend:/src
+      - go-mod-cache:/go/pkg/mod
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/api/v1/health/live"]
+      start_period: 60s
+
+  frontend:
+    build:
+      context: ./frontend
+      target: dev
+    image: workevent-frontend-dev
+    environment:
+      VITE_API_PROXY_TARGET: http://backend:8080
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports: !override
+      - "5173:5173"
+    healthcheck:
+      disable: true
+
+volumes:
+  go-mod-cache:

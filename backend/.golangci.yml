@@ -1,0 +1,26 @@
+version: "2"
+
+run:
+  timeout: 5m
+
+linters:
+  enable:
+    - bodyclose
+    - errorlint
+    - gosec
+    - noctx
+    - revive
+    - sqlclosecheck
+    - unconvert
+    - unparam
+  exclusions:
+    paths:
+      - docs
+    rules:
+      - path: _test\.go
+        linters: [gosec, noctx, unparam]
+
+formatters:
+  enable:
+    - gofmt
+    - goimports

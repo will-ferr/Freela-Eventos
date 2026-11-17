@@ -1,0 +1,23 @@
+# Ambiente
+.env
+.env.*
+!.env.example
+
+# Go
+backend/tmp/
+*.test
+coverage.out
+coverage.html
+
+# Node
+node_modules/
+frontend/dist/
+frontend/coverage/
+*.tsbuildinfo
+
+# Editores / SO
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
